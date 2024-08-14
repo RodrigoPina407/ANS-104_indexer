@@ -4,6 +4,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
+use crate::{http_client::HttpClient, BASE_URL};
+
 #[warn(dead_code)]
 #[derive(Debug, Deserialize, Getters)]
 pub struct Tag {
@@ -60,7 +62,7 @@ impl DataItem {
         false
     }
 
-    pub fn get_decoded_data(&self, b64_encoder: &GeneralPurpose) -> DataItemDecoded {
+    pub async fn get_decoded_metadata(&self, b64_encoder: &GeneralPurpose, client: &HttpClient) -> DataItemDecoded {
         let mut decoded_tags = Vec::new();
         for tag in self.tags() {
             if let Ok(decoded_tag) = tag.get_b64_decoded(b64_encoder) {
@@ -70,22 +72,40 @@ impl DataItem {
             }
         }
 
+        let data = self.get_data(client).await;
+
         DataItemDecoded {
             tx: self.id().to_owned(),
-            tags: decoded_tags,
+            tags: serde_json::to_value(decoded_tags).unwrap_or(Value::Null),
+            data,
         }
+    }
+
+    pub async fn get_data(&self, http_client: &HttpClient) -> Option<String> {
+        let url = format!("{BASE_URL}{}/data", self.id);
+
+        if let Ok((status, response)) = http_client.get(&url).await {
+            if status == 200 {
+                if let Ok(s) = response.text().await {
+                    return Some(s);
+                }
+            }
+        }
+
+        None
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Getters)]
 pub struct DataItemDecoded {
     tx: String,
-    tags: Vec<TagDecoded>,
+    tags: Value,
+    data: Option<String>
 }
 
 impl DataItemDecoded {}
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Getters)]
 pub struct TagDecoded {
     name: String,
     value: String,
