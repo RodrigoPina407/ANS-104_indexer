@@ -20,8 +20,6 @@ struct Cli {
     get_data: bool,
 }
 
-// test tx id NY323dfv59V0hEFifbBiNOkfjAGP_OCpKZbMgpjFcEg; tafV876t7ZFKeY0ezDc-Q_-jUUQc72HB9g3Pjm5HPn4
-
 fn init_db() -> rusqlite::Result<Connection> {
     let conn = Connection::open("items.db")?;
 

@@ -208,6 +208,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1462739cb27611015575c0c11df5df7601141071f07518d56fcc1be504cbec97"
 
 [[package]]
+name = "cli"
+version = "0.1.0"
+dependencies = [
+ "base64",
+ "clap",
+ "derive-getters",
+ "reqwest",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sha256",
+ "tokio",
+]
+
+[[package]]
 name = "colorchoice"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -601,22 +617,6 @@ name = "ipnet"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f518f335dce6725a761382244631d86cf0ccb2863413590b31338feb467f9c3"
-
-[[package]]
-name = "irys_assignment"
-version = "0.1.0"
-dependencies = [
- "base64",
- "clap",
- "derive-getters",
- "reqwest",
- "rusqlite",
- "serde",
- "serde_json",
- "sha2",
- "sha256",
- "tokio",
-]
 
 [[package]]
 name = "is_terminal_polyfill"
